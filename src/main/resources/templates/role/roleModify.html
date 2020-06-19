@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div style="margin: fill ">
+    <form id="form" action="/role/modifyRoleCommit">
+        <input id="role.name" name="role.name" type="text" th:value="${role.name}"/>
+        <br/>
+        <table>
+            <tr>
+                <th>URI</th>
+            </tr>
+            <tr th:each="p:${permisions}">
+                <td>
+                    <!-- 这里就是查询出来的一个List<permission>，显示其中的uri属性，是一个role -》对应多个权限（List<permission>）
+                     其中，即一个role对应多个uri，后端封装了查询整个permisions表的结果集，这里直接循环显示了所有permission
+                     即所有uri，然后判断如果这个role关联的1对多，如果关联到这个uri就打勾，没有就不打钩，因为前端处理太繁琐，这里直接
+                     提交就把所有permission都提交到后端修改，不管有没有钩都按有钩提交修改，sql的逻辑是先删除掉所有的关联这个role的
+                     permission，插入提交的所有permission对象，因为sql多条语句执行，所以要在连接数据库库的
+                     配置地方+ &allowMultiQueries=true 就能发送多条语句了-->
+                    <input th:id="'rp' + ${p.id}" type="hidden" th:value="${p.id}"/>
+                    [[${p.uri}]]
+                    <a th:if="${p.flag} == true">
+                        <input type="checkbox" checked>
+                    </a>
+                    <a th:if="${p.flag} == false">
+                        <input type="checkbox">
+                    </a>
+                </td>
+            </tr>
+
+        </table>
+        <input id="sub" type="button" value="提交111" onclick="sendFormData()">111
+    </form>
+</div>
+111
+</body>
+<script type="text/javascript" th:src="@{/js/common/jquery.min.js}"></script>
+<script type="text/javascript">
+    function sendFormData() {
+        var url = "/role/modifyRoleCommit";
+        var count = [[${permisions.size()}]]
+        var permisions = [];
+        for (var i = 1; i < count + 1; i++) {
+            permisions.push({id: $("#rp" + i).val()})
+            // alert($("#role\\.name").val())
+        }
+        alert(JSON.stringify(permisions))
+        var args = {
+            id: 1,
+            name: $("#role\\.name").val(),
+            permisions: permisions
+        };
+        //这个是提交对象带List -》（Role.List<permisions>+Role.name+Role.id) 的情况到后端接受
+        //需要通过json这个格式数据传送过去才行，同时后端需要通过@RequestBody Role role 方式接受参数
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(args),
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                window.location.reload();
+            }
+        })
+    }
+</script>
+</html>

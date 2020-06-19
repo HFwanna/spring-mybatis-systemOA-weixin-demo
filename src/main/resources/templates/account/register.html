@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+</head>
+<body>
+<h1>注册！</h1>
+<input type="hidden" th:value="${result}" id="result"/>
+<form>
+    <input name="loginName" type="text"><span th:if="${result} != null" style="color: #b82323">[[${result}]]</span>
+    <input name="password" type="text">
+    <input id="sub" type="button" value="注册">
+</form>
+</body>
+<script type="text/javascript" th:src="@{/js/common/jquery.min.js}"></script>
+<script type="text/javascript">
+    //获取项目绝对路径方法
+    function getPathRootJump() {
+        var pathName = window.location.pathname.substring(1);
+        var webName = pathName == '' ? '' : pathName.substring(0, pathName.indexOf('/'));
+        var path_root = window.location.protocol + '//' + window.location.host + '/' + webName + '/';
+        return path_root;
+    }
+
+    $(function () {
+        $("#sub").click(function () {
+            // console.log("666")
+            // console.log($('input[name="loginName"]').val())
+            // console.log($('input[name="password"]').val())
+            // console.log(getPathRootJump())
+
+            //异步发送到后端注册校验，成功后返回登录界面
+            $.ajax({ //post也可
+                url: '/account/register_validate',
+                data: {loginName: $('input[name="loginName"]').val(), password: $('input[name="password"]').val()},
+                dataType: 'text',//这个是返回数据类型
+                success: function (data) {
+                    console.log("chengg")
+                    if (data == 'success') {
+                        var result = $("#result").val();
+                        sessionStorage.setItem('result', result)
+                        window.location.href = '/account/login';
+                    }
+                    //对于获取的数据执行相关的操作，如：绑定、显示等
+                },
+                error: function (data) {
+                    console.log("shibai");
+                }
+            });
+        })
+    })
+
+</script>
+</html>

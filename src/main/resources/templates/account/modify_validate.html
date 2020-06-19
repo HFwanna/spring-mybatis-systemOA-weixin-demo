@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>密码校验</title>
+</head>
+<body>
+<form action="/account/modify_validate">
+    请输入旧的密码
+    <span th:if="${result} != null" style="color: #b82323">[[${result}]]</span>
+    <input name="password" type="text">
+    <input id="sub" type="submit" value="确认">
+</form>
+</body>
+</html>
