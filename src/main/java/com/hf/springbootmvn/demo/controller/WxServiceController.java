@@ -200,4 +200,9 @@ public class WxServiceController {
         }
         return true;
     }
+
+    @RequestMapping("getUserMessage")
+    public String getUserMessage(){
+        return "weixin/personalMessage";
+    }
 }
